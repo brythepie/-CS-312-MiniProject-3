@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create account | The Blog Squad</title>
+    <link rel="stylesheet" href="/stylesheet.css">
+</head>
+<body class="auth-page">
+    <main class="auth-card">
+        <a class="brand-link" href="/">The Blog Squad</a>
+        <p class="eyebrow">Join the community</p>
+        <h1>Create an account</h1>
+        <p>Sign up to publish your own stories and ideas.</p>
+        <% if (error) { %><p class="form-message" role="alert"><%= error %></p><% } %>
+        <form action="/signup" method="POST">
+            <label for="user_id">User ID</label>
+            <input id="user_id" name="user_id" type="text" maxlength="255" value="<%= userId %>" autocomplete="username" required>
+            <label for="name">Name</label>
+            <input id="name" name="name" type="text" maxlength="255" value="<%= name %>" autocomplete="name" required>
+            <label for="password">Password</label>
+            <input id="password" name="password" type="password" maxlength="255" autocomplete="new-password" required>
+            <button type="submit">Create account</button>
+        </form>
+        <p class="auth-switch">Already have an account? <a href="/signin">Sign in</a></p>
+    </main>
+</body>
+</html>

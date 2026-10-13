@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog Web Application</title>
+    <link rel="stylesheet" href="/stylesheet.css">
+</head>
+<body>
+    <header class="header">
+        <div class="header-row">
+            <h1><a href="/">The Blog Squad</a></h1>
+            <nav class="account-nav" aria-label="Account">
+                <% if (currentUser) { %>
+                    <span>Welcome, <%= currentUser.name %></span>
+                    <form action="/signout" method="POST">
+                        <button type="submit" class="button secondary">Sign out</button>
+                    </form>
+                <% } else { %>
+                    <a class="button secondary" href="/signin">Sign in</a>
+                    <a class="button" href="/signup">Create account</a>
+                <% } %>
+            </nav>
+        </div>
+        <nav id="category-nav" aria-label="Filter posts by category">
+            <button type="button" class="active" data-category="All">All Posts</button>
+            <button type="button" data-category="Tech">Tech</button>
+            <button type="button" data-category="Music">Music</button>
+            <button type="button" data-category="Education">Education</button>
+            <button type="button" data-category="Other">Other</button>
+        </nav>
+    </header>
+
+    <main class="main-content">
+        <section class="intro">
+            <p class="eyebrow">Ideas worth sharing</p>
+            <h2>A little space for big thoughts.</h2>
+            <p>Stories, discoveries, and notes from our community.</p>
+        </section>
+
+        <% if (currentUser) { %>
+            <section class="composer">
+                <h2>Write a post</h2>
+                <form id="creationform" action="/posts" method="POST">
+                    <label for="title">Title</label>
+                    <input type="text" id="title" name="title" maxlength="255" required>
+
+                    <label for="contents">Blog contents</label>
+                    <textarea id="contents" name="body" required></textarea>
+
+                    <div class="form-row">
+                        <div>
+                            <label for="category">Category</label>
+                            <select id="category" name="category" required>
+                                <option value="Tech">Tech</option>
+                                <option value="Music">Music</option>
+                                <option value="Education">Education</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="postColor">Post color</label>
+                            <select id="postColor" name="postColor" required>
+                                <option value="DarkGreen">Dark green</option>
+                                <option value="Moss">Moss green</option>
+                                <option value="RosyBrown">Rosy brown</option>
+                                <option value="Midnight">Midnight green</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button type="submit">Publish post</button>
+                </form>
+            </section>
+        <% } else { %>
+            <p class="signin-prompt"><a href="/signin">Sign in</a> to share a post with the community.</p>
+        <% } %>
+
+        <section class="feed" aria-labelledby="feed-heading">
+            <div class="section-heading">
+                <div>
+                    <p class="eyebrow">From the community</p>
+                    <h2 id="feed-heading">Latest posts</h2>
+                </div>
+                <span class="post-count"><%= posts.length %> posts</span>
+            </div>
+            <div id="post-list">
+                <% if (posts.length === 0) { %>
+                    <p class="empty-state">No posts yet. Be the first to share something!</p>
+                <% } %>
+                <% posts.forEach(post => { %>
+                    <article
+                        class="post <%= post.post_color %>"
+                        data-category="<%= post.category %>"
+                    >
+                        <div class="post-topline">
+                            <span class="category-tag"><%= post.category %></span>
+                            <time datetime="<%= post.date_created.toISOString() %>">
+                                <%= post.date_created.toLocaleString() %>
+                            </time>
+                        </div>
+                        <h3><%= post.title %></h3>
+                        <p class="post-author">By <%= post.creator_name %></p>
+                        <p class="post-content"><%= post.body %></p>
+                        <% if (currentUser && currentUser.userId === post.creator_user_id) { %>
+                            <div class="post-actions">
+                                <a class="button secondary" href="/posts/<%= post.blog_id %>/edit">Edit</a>
+                                <form action="/posts/<%= post.blog_id %>/delete" method="POST">
+                                    <button class="button danger" type="submit">Delete</button>
+                                </form>
+                            </div>
+                        <% } %>
+                    </article>
+                <% }) %>
+            </div>
+        </section>
+    </main>
+    <script src="/app.js"></script>
+</body>
+</html>
